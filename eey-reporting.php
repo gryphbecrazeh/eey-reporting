@@ -1,5 +1,5 @@
 <?php
-
+defined('ABSPATH') or die('Inaccessible');
 /**
  * Plugin Name: East End Yovth Reporting
  * Plugin URI: http://www.cordine.site/
@@ -34,10 +34,11 @@ if (!class_exists('EEY_REPORTING_Class')) {
         {
             // Add Item(s) to menu bar
             add_action('admin_bar_menu', array($this, 'eey_reporting_add_toolbar_items'), 100);
-            // Include scripts necessary to run
+            // Include scripts necessary to run, Register front end assets
             add_action('wp_enqueue_scripts', array($this, 'eey_reporting_include_scripts'));
             // Include AJAX actions
-            add_action('eey_pagespeed_report', array($this, 'eey_reporting_page_speed'));
+            add_action('wp_ajax_eey_pagespeed_report', array($this, 'eey_reporting_page_speed'));
+            add_action('wp_ajax_nopriv_eey_pagespeed_report', array($this, 'eey_reporting_page_speed'));
             // Include pagespeed data SHORTCODE
             add_shortcode('eey_pagespeed', array($this, 'eey_reporting_page_speed_2'));
         }
@@ -70,18 +71,13 @@ if (!class_exists('EEY_REPORTING_Class')) {
             <?php
             }
             curl_close($curl);
-            return 0;
-        }
 
-        function eey_reporting_page_speed_2()
-        {
-            ?>
-            <button onclick="">Click Me</button>
-<?php
-        }
 
-        function eey_reporting_include_scripts()
-        {
+            wp_send_json_success( "test" );
+
+
+            /*
+
             $google_uri_base = 'https://www.googleapis.com/webmasters/v3';
             $client_id = '258642766560-uv0tvs227beilrtceaco1tk7nth1p3p5.apps.googleusercontent.com';
             $client_secret = 'MffmMp-bzR44_a_-a5-4d4nQ';
@@ -113,6 +109,41 @@ if (!class_exists('EEY_REPORTING_Class')) {
             // echo $res;
 
             curl_close($curl);
+*/
+        }
+
+        function eey_reporting_page_speed_2()
+        {
+            ?>
+            <div>
+            <button class="pagespeed" onclick="">Click me to get your website data</button>
+            <div class="results"></div>
+            </div>
+            
+<?php
+        }
+        function register_frontend_assets()
+        {
+            $frontend_js_obj = array(
+
+                'default_error_message' => __('This field is required', EEY_REPORTING_TD),
+
+                'ajax_url' => admin_url('admin-ajax.php'),
+
+                'ajax_nonce' => wp_create_nonce('frontend-ajax-nonce'),
+
+                'preview_img' => EEY_REPORTING_IMG_DIR . '/no-preview.png'
+
+            );
+
+            wp_localize_script('frontend.js', 'frontend_js_obj', $frontend_js_obj);
+        }
+        function eey_reporting_include_scripts()
+        {
+            // wp_register_style('eey_reporting_style.css', plugins_url('/css/eey_reporting_style.css', __FILE__));
+            // wp_enqueue_style('eey_reporting_style.css');
+            wp_enqueue_script('frontend.js', plugins_url('/js/frontend.js', __FILE__));
+            EEY_REPORTING_Class::register_frontend_assets();
         }
 
         function eey_reporting_add_toolbar_items($admin_bar)
@@ -137,4 +168,5 @@ if (!class_exists('EEY_REPORTING_Class')) {
         // audience
 
     }
+    $eey_reporting_obj = new EEY_REPORTING_Class();
 }
