@@ -26,11 +26,22 @@ defined('EEY_REPORTING_JS_DIR') or define('EEY_REPORTING_JS_DIR', plugin_dir_url
 // PLUGIN CSS DIRECTORY
 defined('EEY_REPORTING_CSS_DIR') or define('EEY_REPORTING_CSS_DIR', plugin_dir_url(__FILE__) . 'css');
 
+// Includes
+include_once __DIR__ . '/includes/options.php';
+#require_once 'includes/google-analytics.php';
+#require_once 'includes/trello-api.php';
+
 if (!class_exists('EEY_REPORTING_Class')) {
     class EEY_REPORTING_Class
     {
+        public $plugin;
+       
         function __construct()
         {
+            // Define the plugin base
+            $this->plugin = plugin_basename(__FILE__);
+            $options = new EEY_REPORTING_SETTINGS_Class($this->plugin);
+            $options->register();
             // Add Item(s) to menu bar
             add_action('admin_bar_menu', array($this, 'eey_reporting_add_toolbar_items'), 100);
             // Include scripts necessary to run, Register front end assets
