@@ -47,7 +47,6 @@ if (!class_exists('EEY_REPORTING_Class')) {
         {
             $base_url = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=";
             $target = "https://eastendyovth.com";
-
             $curl = curl_init();
 
             curl_setopt_array($curl, [
@@ -62,19 +61,14 @@ if (!class_exists('EEY_REPORTING_Class')) {
             $audits = get_object_vars($lighthouse_result->audits);
             // Cycle through each element and output the title and value
             foreach ($audits as $index => $value) {
-?>
+            ?>
                 <div>
                     <?php echo $value->title ?> : <?php echo $value->displayValue ?>
                 </div>
 
-
             <?php
             }
             curl_close($curl);
-
-
-            wp_send_json_success( "test" );
-
 
             /*
 
@@ -116,10 +110,10 @@ if (!class_exists('EEY_REPORTING_Class')) {
         {
             ?>
             <div>
-            <button class="pagespeed" onclick="">Click me to get your website data</button>
-            <div class="results"></div>
+                <button class="pagespeed" onclick="">Click me to get your pagespeed insights</button>
+                <div class="results"></div>
             </div>
-            
+
 <?php
         }
         function register_frontend_assets()
