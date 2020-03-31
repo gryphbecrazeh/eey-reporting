@@ -26,7 +26,6 @@ defined('EEY_REPORTING_JS_DIR') or define('EEY_REPORTING_JS_DIR', plugin_dir_url
 // PLUGIN CSS DIRECTORY
 defined('EEY_REPORTING_CSS_DIR') or define('EEY_REPORTING_CSS_DIR', plugin_dir_url(__FILE__) . 'css');
 
-
 if (!class_exists('EEY_REPORTING_Class')) {
     class EEY_REPORTING_Class
     {
