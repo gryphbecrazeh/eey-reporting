@@ -21,19 +21,21 @@ class EEY_REPORTING_SETTINGS_Class
     {
         add_menu_page('EEY Reporting', 'EEY Reporting', 'manage_options', 'eey_reporting_plugin', array($this, 'admin_index'), '
             dashicons-format-aside', 110);
+            include_once __DIR__ . '/forms/add_site.php';
+        add_submenu_page('eey_reporting_plugin', 'Add Website', 'Add Website', 'manage_options', 'add_website', 'eey_reporting_add_website' );
     }
 
     public function settings_link($links)
     {
         $settings_link = '<a href="admin.php?page=eey_reporting_plugin">Settings</a>';
 
-        array_push($links,$settings_link);
+        array_push($links, $settings_link);
 
         return $links;
     }
 
     public function admin_index()
     {
-        require_once __DIR__ . "/templates/admin.php";
+        require_once __DIR__ . '/templates/admin.php';
     }
 }

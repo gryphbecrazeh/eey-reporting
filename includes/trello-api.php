@@ -55,9 +55,6 @@ $cards = $json->cards;
 
 
 foreach(array_filter($lists, "FilterList") as $list) {
-    // var_dump($list);
-    // echo "<br><br><br>";
-    // var_dump($cards[0]);
     ?>
         <p>Completed tasks in <?php echo date('M') ?></p>
         <ul>
