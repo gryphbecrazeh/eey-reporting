@@ -57,7 +57,6 @@ if (!class_exists('EEY_REPORTING_Class')) {
             // Include pagespeed data SHORTCODE
             add_shortcode('eey_pagespeed', array($this, 'eey_reporting_page_speed_2'));
 
-
             // Activation Scripts
 
             // Add Table to Database
@@ -190,6 +189,10 @@ if (!class_exists('EEY_REPORTING_Class')) {
             wp_enqueue_script('frontend.js', plugins_url('/js/frontend.js', __FILE__));
             EEY_REPORTING_Class::register_frontend_assets();
         }
+
+
+
+
 
         function eey_reporting_add_toolbar_items($admin_bar)
         {
