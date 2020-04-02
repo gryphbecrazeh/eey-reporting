@@ -59,15 +59,15 @@ if (!class_exists('EEY_REPORTING_Class')) {
 
             // Activation Scripts
 
-            // Add Table to Database
-            register_activation_hook(__FILE__, array($this, 'create_plugin_database_table'));
+            // Add Tables to Database
+            register_activation_hook(__FILE__, array($this, 'create_plugin_databases_table'));
         }
 
         // Setup database
-        public function create_plugin_database_table()
+        public function create_plugin_databases_table()
         {
             global $wpdb;
-
+            // Websites Table
             $table_name = $wpdb->prefix . 'eey_reporting_websites';
             // Define tables and fields
             $eey_reporting_query = "CREATE TABLE $table_name(
@@ -84,6 +84,20 @@ if (!class_exists('EEY_REPORTING_Class')) {
                     ga_token_uri varchar (100) DEFAULT '',
                     ga_auth_provider_x509_cert_url varchar (100) DEFAULT '',
                     ga_client_x509_cert_url varchar (100) DEFAULT '',
+                    PRIMARY KEY (id)
+                )";
+
+            require_once(ABSPATH . "wp-admin/includes/upgrade.php");
+            // Add Table
+            dbDelta($eey_reporting_query);
+
+
+            $table_name = $wpdb->prefix . 'eey_reporting_settings';
+            // Define tables and fields
+            $eey_reporting_query = "CREATE TABLE $table_name(
+                    id int(10) NOT NULL AUTO_INCREMENT,
+                    trello_api_key varchar (100) DEFAULT '',
+                    trello_auth_token varchar (100) DEFAULT '',
                     PRIMARY KEY (id)
                 )";
 

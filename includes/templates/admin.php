@@ -3,21 +3,40 @@
 // Render out all websites here
 global $wpdb;
 
-$query = 'SELECT ID, domain_name FROM ' . $wpdb->prefix . 'eey_reporting_websites';
+// Render Out List of Websites
+if (!isset($_GET['data_id'])) {
+    $query = 'SELECT ID, domain_name FROM ' . $wpdb->prefix . 'eey_reporting_websites';
+    $websites = $wpdb->get_results($query);
 
-$websites = $wpdb->get_results($query);
+    foreach ($websites as $website) {
 
-foreach ($websites as $website) {
 ?>
-    <div class="website-container">
-        <div class="website-domain"><?php echo $website->domain_name; ?></div>
-        <div class="actions-container">
-            <button data_id="<?php echo $website->ID; ?>">Generate Report</button>
-            <button data_id="<?php echo $website->ID; ?>">Edit</button>
-            <button data_id="<?php echo $website->ID; ?>">Delete</button>
+        <div class="website-container">
+            <div class="website-domain"><?php echo $website->domain_name; ?></div>
+            <div class="actions-container">
+                <!-- Replace these buttons with links to their respective form pages, where they will get the data based on the ID ex: <a href="__FILE__/includes/forms/edit_site.php?data_id=__DATA_ID__-->
+                <!-- admin.php?data_id=__DATA_ID__ -->
+                <!-- on admin.php if(isset($_POST['data_id'])) call generate_report.php function -->
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_report&data_id=<?php echo $website->ID ?>">Generate Report</a>
+                </div>
+                <button data_id="<?php echo $website->ID; ?>">Edit</button>
+                <button data_id="<?php echo $website->ID; ?>">Delete</button>
+            </div>
         </div>
-    </div>
+
 <?php
+    }
+    return 0;
 }
 
-?>
+$params = $_GET;
+$plugin_url = ABSPATH . 'wp-content/plugins/eey-reporting';
+switch ($params['action']) {
+    case "generate_report":
+            include_once $plugin_url . '/includes/forms/generate_report.php';
+            generate_report($params['data_id']);
+    break;
+    case "edit_site":
+        include_once $plugin_url . '/includes/forms/edit_site.php';
+    break;
+}
