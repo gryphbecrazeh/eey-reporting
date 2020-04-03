@@ -55,16 +55,25 @@ class TRELLO_API
         if ($json) {
             $lists = $json->lists;
             $cards = $json->cards;
-            // function FilterList($item)
-            // {
-            //     if ($item->name === "Completed")
-            //         return TRUE;
-            //     else
-            //         return FALSE;
-            // }
-
+            function FilterList($item)
+            {
+                if ($item->name === "Completed")
+                    return TRUE;
+                else
+                    return FALSE;
+            }
+            function FilterCards($item)
+            {
+                $startDate = date('Y-m-d', strtotime('-1 month'));
+                $cardID = $item->id;
+                $createdDate = date('Y-m-d', hexdec(substr($cardID, 0, 8)));
+                if ($createdDate > $startDate)
+                    return TRUE;
+                else
+                    return FALSE;
+            }
             // foreach (array_filter($lists, "FilterList") as $list) {
-            foreach (array_filter($lists, array($this, 'FilterList')) as $list) {
+            foreach (array_filter($lists, 'FilterList') as $list) {
 
 ?>
                 <p>Completed tasks in <?php echo date('M') ?></p>
@@ -88,10 +97,5 @@ class TRELLO_API
             echo "Cannot find <a href='https://trello.com/b/$boardId'>https://trello.com/b/$boardId</a>...";
         }
         curl_close($curl);
-
-
-        // #############################################################################################
-        // End Trello API
-        // #############################################################################################
     }
 }
