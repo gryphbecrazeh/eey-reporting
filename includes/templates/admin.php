@@ -19,8 +19,10 @@ if (!isset($_GET['data_id'])) {
                 <!-- on admin.php if(isset($_POST['data_id'])) call generate_report.php function -->
                 <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_report&data_id=<?php echo $website->ID ?>">Generate Report</a>
                 </div>
-                <button data_id="<?php echo $website->ID; ?>">Edit</button>
-                <button data_id="<?php echo $website->ID; ?>">Delete</button>
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=edit_site&data_id=<?php echo $website->ID ?>">Edit Site</a>
+                </div>
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=delete_site&data_id=<?php echo $website->ID ?>">Delete Site</a>
+                </div>
             </div>
         </div>
 
@@ -33,10 +35,15 @@ $params = $_GET;
 $plugin_url = ABSPATH . 'wp-content/plugins/eey-reporting';
 switch ($params['action']) {
     case "generate_report":
-            include_once $plugin_url . '/includes/forms/generate_report.php';
-            generate_report($params['data_id']);
-    break;
+        include_once $plugin_url . '/includes/forms/generate_report.php';
+        generate_report($params['data_id']);
+        break;
     case "edit_site":
         include_once $plugin_url . '/includes/forms/edit_site.php';
-    break;
+        edit_site($params['data_id']);
+        break;
+    case "delete_site":
+        include_once $plugin_url . '/includes/forms/delete_site.php';
+        confirm_delete_website($params['data_id']);
+        break;
 }
