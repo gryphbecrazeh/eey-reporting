@@ -16,12 +16,29 @@ class GA_API
     // Use the developers console and download your service account
     // credentials in JSON format. Place them in this directory or
     // change the key file location if necessary.
-    $KEY_FILE_LOCATION = __DIR__ . '/../config/My Project-b774a516a946.json';
-
+    // $KEY_FILE_LOCATION = __DIR__ . '/../config/My Project-b774a516a946.json';
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'eey_reporting_settings';
+    $query = "SELECT * FROM $table_name";
+    $results = $wpdb->get_results($query)[0];
+    $auth_config = array(
+      'type' => $results->ga_type,
+      'project_id' => $results->ga_project_id,
+      'private_key_id' => $results->ga_private_key_id,
+      'private_key' => $results->ga_private_key,
+      'client_email' => $results->ga_client_email,
+      'client_id' => $results->ga_client_id,
+      'auth_uri' => $results->ga_auth_uri,
+      'token_uri' => $results->ga_token_uri,
+      'auth_provider_x509_cert_url' => $results->ga_auth_provider_x509_cert_url,
+      'client_x509_cert_url' => $results->ga_client_x509_cert_url
+    );
+    $json_config = stripslashes(json_encode($auth_config));
+    echo "<script>console.log($json_config)</script>";
     // Create and configure a new client object.
     $client = new Google_Client();
     $client->setApplicationName("Hello Analytics Reporting");
-    $client->setAuthConfig($KEY_FILE_LOCATION);
+    $client->setAuthConfig($json_config);
     $client->setScopes(['https://www.googleapis.com/auth/analytics.readonly']);
     $analytics = new Google_Service_AnalyticsReporting($client);
 
@@ -54,7 +71,7 @@ class GA_API
       $item->setAlias($array["alias"]);
       return $item;
     }
-    
+
     // $array  = array(
     //   "name" => "Sessions",
     //   "expression" => "ga:sessions",

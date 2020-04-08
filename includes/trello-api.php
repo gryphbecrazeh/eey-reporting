@@ -31,13 +31,21 @@ class TRELLO_API
     // }
     function RenderResults($boardId)
     {
+        global $wpdb;
 
-        $plugin_url = ABSPATH . 'wp-content/plugins/eey-reporting';
+        $settings_table = $wpdb->prefix . 'eey_reporting_settings';
 
-        $str = file_get_contents($plugin_url . '/includes/config/Trello-API.json');
-        $json = json_decode($str, true);
-        $key = $json["key"];
-        $token = $json["defaultToken"];
+        $query = "SELECT * FROM $settings_table";
+
+        $config = $wpdb->get_results($query)[0];
+
+        // $plugin_url = ABSPATH . 'wp-content/plugins/eey-reporting';
+
+        // $str = file_get_contents($plugin_url . '/includes/config/Trello-API.json');
+        // $json = json_decode($str, true);
+
+        $key = $config->trello_api_key;
+        $token = $config->trello_default_token;
 
         // Initialize a start date from 1 month ago
         $startDate = date('Y-m-d', strtotime('-1 month'));

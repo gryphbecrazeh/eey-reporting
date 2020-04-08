@@ -46,4 +46,8 @@ switch ($params['action']) {
         include_once $plugin_url . '/includes/forms/delete_site.php';
         confirm_delete_website($params['data_id']);
         break;
+    case "update_settings":
+        include_once $plugin_url . '/includes/templates/settings.php';
+        eey_reporting_settings_page();
+        break;
 }

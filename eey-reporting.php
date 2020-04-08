@@ -74,16 +74,32 @@ if (!class_exists('EEY_REPORTING_Class')) {
                     id int(10) NOT NULL AUTO_INCREMENT,
                     domain_name varchar (100) DEFAULT '',
                     trello_board_id varchar (100) DEFAULT '',
-                    ga_type varchar (100) DEFAULT '',
-                    ga_project_id varchar (100) DEFAULT '',
-                    ga_private_key_id varchar (100) DEFAULT '',
-                    ga_private_key varchar (100) DEFAULT '',
-                    ga_client_email varchar (100) DEFAULT '',
-                    ga_client_id varchar (100) DEFAULT '',
-                    ga_auth_uri varchar (100) DEFAULT '',
-                    ga_token_uri varchar (100) DEFAULT '',
-                    ga_auth_provider_x509_cert_url varchar (100) DEFAULT '',
-                    ga_client_x509_cert_url varchar (100) DEFAULT '',
+                    ga_view_id varchar (100) DEFAULT '',
+                    PRIMARY KEY (id)
+                )";
+
+            require_once(ABSPATH . "wp-admin/includes/upgrade.php");
+            // Add Table
+            dbDelta($eey_reporting_query);
+
+            // Settings Table
+            $table_name = $wpdb->prefix . 'eey_reporting_settings';
+            // Define tables and fields
+            $eey_reporting_query = "CREATE TABLE $table_name(
+                    id int(10) NOT NULL AUTO_INCREMENT,
+                    trello_api_key varchar (500) DEFAULT '',
+                    trello_default_token varchar (500) DEFAULT '',
+                    trello_oauth_secret varchar (500) DEFAULT '',
+                    ga_type varchar (500) DEFAULT '',
+                    ga_project_id varchar (500) DEFAULT '',
+                    ga_private_key_id varchar (500) DEFAULT '',
+                    ga_private_key varchar (5000) DEFAULT '',
+                    ga_client_email varchar (500) DEFAULT '',
+                    ga_client_id varchar (500) DEFAULT '',
+                    ga_auth_uri varchar (500) DEFAULT '',
+                    ga_token_uri varchar (500) DEFAULT '',
+                    ga_auth_provider_x509_cert_url varchar (500) DEFAULT '',
+                    ga_client_x509_cert_url varchar (500) DEFAULT '',
                     PRIMARY KEY (id)
                 )";
 
@@ -92,12 +108,16 @@ if (!class_exists('EEY_REPORTING_Class')) {
             dbDelta($eey_reporting_query);
 
 
-            $table_name = $wpdb->prefix . 'eey_reporting_settings';
+
+            // Logs Table
+            $table_name = $wpdb->prefix . 'eey_reporting_data_logs';
             // Define tables and fields
             $eey_reporting_query = "CREATE TABLE $table_name(
                     id int(10) NOT NULL AUTO_INCREMENT,
-                    trello_api_key varchar (100) DEFAULT '',
-                    trello_auth_token varchar (100) DEFAULT '',
+                    domain_name varchar (100) DEFAULT '',
+                    trello_report_values MEDIUMTEXT DEFAULT '',
+                    google_analytics_values MEDIUMTEXT DEFAULT '',
+                    report_date DATE,
                     PRIMARY KEY (id)
                 )";
 
