@@ -1,7 +1,8 @@
 <?php
 
 // Load the Google API PHP Client Library.
-require_once __DIR__ . '/../vendor/autoload.php';
+$google_autoload = plugin_dir_path(__DIR__) . 'vendor/autoload.php';
+require_once plugin_dir_path(__DIR__) . 'vendor/autoload.php';
 
 class GA_API
 {
@@ -12,15 +13,18 @@ class GA_API
    */
   protected function initializeAnalytics()
   {
+    global $wpdb;
 
     // Use the developers console and download your service account
     // credentials in JSON format. Place them in this directory or
     // change the key file location if necessary.
     // $KEY_FILE_LOCATION = __DIR__ . '/../config/My Project-b774a516a946.json';
-    global $wpdb;
+    $KEY_FILE_LOCATION = plugin_dir_path(__DIR__) . '/includes/config/My Project-b774a516a946.json';
+
     $table_name = $wpdb->prefix . 'eey_reporting_settings';
     $query = "SELECT * FROM $table_name";
     $results = $wpdb->get_results($query)[0];
+
     $auth_config = array(
       'type' => $results->ga_type,
       'project_id' => $results->ga_project_id,
@@ -33,13 +37,29 @@ class GA_API
       'auth_provider_x509_cert_url' => $results->ga_auth_provider_x509_cert_url,
       'client_x509_cert_url' => $results->ga_client_x509_cert_url
     );
-    $json_config = stripslashes(json_encode($auth_config));
-    echo "<script>console.log($json_config)</script>";
+
+    $config_file = fopen($KEY_FILE_LOCATION, 'w') or die("Unable to open file!");
+    fwrite($config_file, stripslashes(json_encode($auth_config))) or die("Unable to write file!");
+    fclose($config_file);
+
+
+    // $json_config = stripslashes(json_encode($auth_config));
+
+    // print_r($json_config);
+
     // Create and configure a new client object.
     $client = new Google_Client();
+
     $client->setApplicationName("Hello Analytics Reporting");
-    $client->setAuthConfig($json_config);
+
+    // $client->setAuthConfig($json_config);
+
+    $client->setAuthConfig($KEY_FILE_LOCATION);
+    // echo "test";
+    // die();
+
     $client->setScopes(['https://www.googleapis.com/auth/analytics.readonly']);
+
     $analytics = new Google_Service_AnalyticsReporting($client);
 
     return $analytics;
@@ -111,8 +131,15 @@ class GA_API
     $request = new Google_Service_AnalyticsReporting_ReportRequest();
     $request->setViewId($VIEW_ID);
     $request->setDateRanges($dateRange);
-    $request->setMetrics(array($sessions, $bounces, $bounceRate, $load_time));
 
+    // Get fields from class
+    include_once plugin_dir_path(__DIR__) . 'includes/forms/ga_inc/ga_report_class.php';
+
+    $get_request_fields = new GA_REPORT_FIELDS();
+    $request_fields = $get_request_fields->mapMetrics($get_request_fields->report_fields);
+    $chunks = array_chunk($request_fields,10);
+
+    $request->setMetrics($chunks[0]);
     $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
     $body->setReportRequests(array($request));
     return $analytics->reports->batchGet($body);
@@ -162,7 +189,9 @@ class GA_API
   }
   public function report($view_id)
   {
+
     $analytics = $this->initializeAnalytics();
+
     $google_response = $this->getReport($analytics, $view_id);
     return $this->printResults($google_response);
   }
