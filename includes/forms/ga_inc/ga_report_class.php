@@ -1,38 +1,12 @@
 <?php
 // Define all fields required for reporting
+// Cannot use a mix of Sessions and Metrics, has to be either
 class GA_REPORT_FIELDS
 {
     function __construct()
     {
         $this->report_fields = array(
-            // 'new_users' => array(
-            //     'alias' => 'New Users',
-            //     'expression' => 'ga:newUsers'
-            // ),
-            // 'percent_new_sessions' => array(
-            //     'alias' => '% of New Sessions',
-            //     'expression' => 'ga:percentNewSessions'
-            // ),
-            // '1_day_users' => array(
-            //     'alias' => '1 Day Active Users',
-            //     'expression' => 'ga:1dayUsers'
-            // ),
-            // '7_day_users' => array(
-            //     'alias' => '7 Day Active Users',
-            //     'expression' => 'ga:7dayUsers'
-            // ),
-            // '14_day_users' => array(
-            //     'alias' => '14 Day Active Users',
-            //     'expression' => 'ga:14dayUsers'
-            // ),
-            // '28_day_users' => array(
-            //     'alias' => '28 Day Active Users',
-            //     'expression' => 'ga:28dayUsers'
-            // ),
-            // '30_day_users' => array(
-            //     'alias' => '30 Day Active Users',
-            //     'expression' => 'ga:30dayUsers'
-            // ),
+            // Metrics
             'sessions' => array(
                 'alias' => 'Sessions',
                 'expression' => 'ga:sessions'
@@ -106,8 +80,8 @@ class GA_REPORT_FIELDS
     {
         // $map = array_map(array($this, 'generateMetrics'), $array);
         $map = [];
-        foreach($array as $item) {
-            array_push($map,$this->generateMetrics($item));
+        foreach ($array as $item) {
+            array_push($map, $this->generateMetrics($item));
         }
 
         return $map;

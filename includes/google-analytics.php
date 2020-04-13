@@ -15,12 +15,10 @@ class GA_API
   {
     global $wpdb;
 
-    // Use the developers console and download your service account
-    // credentials in JSON format. Place them in this directory or
-    // change the key file location if necessary.
-    // $KEY_FILE_LOCATION = __DIR__ . '/../config/My Project-b774a516a946.json';
+    // Required Config file by Google
     $KEY_FILE_LOCATION = plugin_dir_path(__DIR__) . '/includes/config/My Project-b774a516a946.json';
 
+    // Get the latest settings and update the config file
     $table_name = $wpdb->prefix . 'eey_reporting_settings';
     $query = "SELECT * FROM $table_name";
     $results = $wpdb->get_results($query)[0];
@@ -38,25 +36,18 @@ class GA_API
       'client_x509_cert_url' => $results->ga_client_x509_cert_url
     );
 
-    $config_file = fopen($KEY_FILE_LOCATION, 'w') or die("Unable to open file!");
-    fwrite($config_file, stripslashes(json_encode($auth_config))) or die("Unable to write file!");
+    // Update the JSON config file
+    $config_file = fopen($KEY_FILE_LOCATION, 'w') or die("Unable to open JSON config file!");
+    fwrite($config_file, stripslashes(json_encode($auth_config))) or die("Unable to write JSON config file!");
     fclose($config_file);
 
-
-    // $json_config = stripslashes(json_encode($auth_config));
-
-    // print_r($json_config);
 
     // Create and configure a new client object.
     $client = new Google_Client();
 
     $client->setApplicationName("Hello Analytics Reporting");
 
-    // $client->setAuthConfig($json_config);
-
     $client->setAuthConfig($KEY_FILE_LOCATION);
-    // echo "test";
-    // die();
 
     $client->setScopes(['https://www.googleapis.com/auth/analytics.readonly']);
 
@@ -72,135 +63,111 @@ class GA_API
    * @param service An authorized Analytics Reporting API V4 service object.
    * @return The Analytics Reporting API V4 response.
    */
-  protected function getReport($analytics, $VIEW_ID)
+  protected function getReport($analytics, $VIEW_ID, $date)
   {
-
-    // Initialize a start date from 1 month ago
-    $startDate = date('Y-m-d', strtotime('-1 month'));
-
-    // Create the DateRange object.
-    $dateRange = new Google_Service_AnalyticsReporting_DateRange();
-    $dateRange->setStartDate($startDate);
-    $dateRange->setEndDate("today");
-
-    // Create the Metrics objects
-    function generateMetrics($array)
-    {
-      $item = new Google_Service_AnalyticsReporting_Metric();
-      $item->setExpression($array["expression"]);
-      $item->setAlias($array["alias"]);
-      return $item;
-    }
-
-    // $array  = array(
-    //   "name" => "Sessions",
-    //   "expression" => "ga:sessions",
-    //   "alias" => "sessions"
-    // );
-    // $array2  = array(
-    //   "name" => "sessions 2",
-    //   "expression" => "ga:sessions",
-    //   "alias" => "sessions"
-    // );
-
-    // // print_r($array);
-    // // echo $array["expression"];
-    // $master_array = [$array, $array2];
-    // $total_array = array_map('generateMetrics', $master_array)
-    // // print_r($total_array);
-
-    // var_dump($total_array);
-
-    $sessions = new Google_Service_AnalyticsReporting_Metric();
-    $sessions->setExpression("ga:sessions");
-    $sessions->setAlias("sessions");
-
-    $bounces = new Google_Service_AnalyticsReporting_Metric();
-    $bounces->setExpression("ga:bounces");
-    $bounces->setAlias("bounces");
-
-    $bounceRate = new Google_Service_AnalyticsReporting_Metric();
-    $bounceRate->setExpression("ga:bounceRate");
-    $bounceRate->setAlias("bounce rate");
-
-    $load_time = new Google_Service_AnalyticsReporting_Metric();
-    $load_time->setExpression("ga:pageLoadTime");
-    $load_time->setAlias("Load Time");
-
-    // Create the ReportRequest object.
-    $request = new Google_Service_AnalyticsReporting_ReportRequest();
-    $request->setViewId($VIEW_ID);
-    $request->setDateRanges($dateRange);
-
+    // $startDate = date('Y-m-d', strtotime('-1 month'));
+    // $startDate = date('Y-m-d', strtotime('2020-04-09'));
+    $startDate = $date;
     // Get fields from class
     include_once plugin_dir_path(__DIR__) . 'includes/forms/ga_inc/ga_report_class.php';
 
     $get_request_fields = new GA_REPORT_FIELDS();
     $request_fields = $get_request_fields->mapMetrics($get_request_fields->report_fields);
-    $chunks = array_chunk($request_fields,10);
 
-    $request->setMetrics($chunks[0]);
-    $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
-    $body->setReportRequests(array($request));
-    return $analytics->reports->batchGet($body);
+    // Break down into an array to iterate through and get all options
+    $chunks = array_chunk($request_fields, 10);
+
+    $array = [];
+
+    foreach ($chunks as $chunk) {
+
+      // Create the DateRange object.
+      $dateRange = new Google_Service_AnalyticsReporting_DateRange();
+
+      // Get Data for specific date
+      // DEV NOTE: maybe go Month by month
+      $dateRange->setStartDate($startDate);
+      // $dateRange->setEndDate("today");
+      $dateRange->setEndDate($startDate);
+
+      // Create the ReportRequest object.
+      $request = new Google_Service_AnalyticsReporting_ReportRequest();
+      $request->setViewId($VIEW_ID);
+      $request->setDateRanges($dateRange);
+
+      $request->setMetrics($chunk);
+
+      $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
+      $body->setReportRequests(array($request));
+      $this->printResults(array($analytics->reports->batchGet($body)));
+      // array_push($array, $analytics->reports->batchGet($body));
+    }
+
+    // return $array;
   }
+
 
   /**
    * Parses and prints the Analytics Reporting API V4 response.
    *
    * @param An Analytics Reporting API V4 response.
    */
-  protected function printResults($reports)
-  {
-    for ($reportIndex = 0; $reportIndex < count($reports); $reportIndex++) {
-      $report = $reports[$reportIndex];
-      $header = $report->getColumnHeader();
-      $dimensionHeaders = $header->getDimensions();
-      $metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
-      $rows = $report->getData()->getRows();
+  protected function printResults($reports_array)
+  { ?>
+    <ul>
+      <?php
 
-      for ($rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
-        $row = $rows[$rowIndex];
-        $dimensions = $row->getDimensions();
-        $metrics = $row->getMetrics();
-        for ($i = 0; $i < count($dimensionHeaders) && $i < count($dimensions); $i++) {
-          print($dimensionHeaders[$i] . ": " . $dimensions[$i] . "\n");
-        }
-?>
-        <ul>
-          <?php
+      foreach ($reports_array as $reports) {
+        for ($reportIndex = 0; $reportIndex < count($reports); $reportIndex++) {
+          $report = $reports[$reportIndex];
+          $header = $report->getColumnHeader();
 
-          for ($j = 0; $j < count($metrics); $j++) {
-            $values = $metrics[$j]->getValues();
-            for ($k = 0; $k < count($values); $k++) {
-              $entry = $metricHeaders[$k];
-              // print($entry->getName() . ": " . $values[$k] . "\n");
-          ?>
-              <li><?php echo $entry->getName() ?>: <?php echo $values[$k] ?></li>
-          <?php
+          $dimensionHeaders = $header->getDimensions();
 
+          $metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
+          $rows = $report->getData()->getRows();
+
+          for ($rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
+            $row = $rows[$rowIndex];
+            $dimensions = $row->getDimensions();
+            $metrics = $row->getMetrics();
+            for ($i = 0; $i < count($dimensionHeaders) && $i < count($dimensions); $i++) {
+              print($dimensionHeaders[$i] . ": " . $dimensions[$i] . "\n");
             }
+      ?>
+            <?php
+
+            for ($j = 0; $j < count($metrics); $j++) {
+              $values = $metrics[$j]->getValues();
+              for ($k = 0; $k < count($values); $k++) {
+                $entry = $metricHeaders[$k];
+            ?>
+                <li><?php echo $entry->getName() ?>: <?php echo $values[$k] ?></li>
+            <?php
+
+              }
+            }
+            ?>
+      <?php
           }
-          ?>
-        </ul>
-<?php
+        }
       }
-    }
+      ?>
+
+    </ul>
+
+<?php
   }
+
+
   public function report($view_id)
   {
 
     $analytics = $this->initializeAnalytics();
 
-    $google_response = $this->getReport($analytics, $view_id);
+    $date = current_time('Y-m-d');
+
+    $google_response = $this->getReport($analytics, $view_id, $date);
     return $this->printResults($google_response);
-  }
-  // Create the Metrics objects
-  public function generateMetrics($array)
-  {
-    $item = new Google_Service_AnalyticsReporting_Metric();
-    $item->setExpression($array["expression"]);
-    $item->setAlias($array["alias"]);
-    return $item;
   }
 }

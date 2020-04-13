@@ -152,41 +152,6 @@ if (!class_exists('EEY_REPORTING_Class')) {
             <?php
             }
             curl_close($curl);
-
-            /*
-
-            $google_uri_base = 'https://www.googleapis.com/webmasters/v3';
-            $client_id = '258642766560-uv0tvs227beilrtceaco1tk7nth1p3p5.apps.googleusercontent.com';
-            $client_secret = 'MffmMp-bzR44_a_-a5-4d4nQ';
-            $api_key = "AIzaSyBhmbm2PC7uSvS2W1bfQ-xTNptpGOIQBjQ";
-            $url = 'http://www.fallonfiberglass.com/';
-            $url = preg_replace("/:/", "%3A", $url);
-            $url = preg_replace("/\//", "%2F", $url);
-
-            // Initialize cURL
-            $curl = curl_init();
-
-            // curl -H 'Content-Type: application/json' --data '{url: "http://fallonfiberglass.com"}' 'https://searchconsole.googleapis.com/v1/urlTestingTools/mobileFriendlyTest:run?key=AIzaSyBhmbm2PC7uSvS2W1bfQ-xTNptpGOIQBjQ'
-
-            $headers = [
-                "Authorization: Bearer $client_id",
-                'Accept: application/json',
-                'Content-Type: application/json'
-            ];
-
-            // Set Options
-            curl_setopt_array($curl, [
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_URL => "$google_uri_base/sites/query?key=$api_key",
-                CURLOPT_USERAGENT => 'Codular Sample cURL Request'
-            ]);
-
-            $res = curl_exec($curl);
-            // echo $res;
-
-            curl_close($curl);
-*/
         }
 
         function eey_reporting_page_speed_2()

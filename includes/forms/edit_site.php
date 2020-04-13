@@ -10,7 +10,7 @@ function edit_site($data_id)
 ?>
     <h1>Editing <?php echo $results->domain_name ?></h1>
 
-    <form method="post" id="add-site-form">
+    <form method="post" id="edit-site-form">
         <div style="display:none;">
             <label>Domain Name</label>
             <input type="text" name="domain_name" value=<?php echo $results->domain_name ?> />

@@ -14,15 +14,15 @@ if (!isset($_GET['data_id'])) {
         <div class="website-container">
             <div class="website-domain"><?php echo $website->domain_name; ?></div>
             <div class="actions-container">
-                <!-- Replace these buttons with links to their respective form pages, where they will get the data based on the ID ex: <a href="__FILE__/includes/forms/edit_site.php?data_id=__DATA_ID__-->
-                <!-- admin.php?data_id=__DATA_ID__ -->
-                <!-- on admin.php if(isset($_POST['data_id'])) call generate_report.php function -->
                 <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_report&data_id=<?php echo $website->ID ?>">Generate Report</a>
                 </div>
                 <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=edit_site&data_id=<?php echo $website->ID ?>">Edit Site</a>
                 </div>
                 <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=delete_site&data_id=<?php echo $website->ID ?>">Delete Site</a>
                 </div>
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_backlog&data_id=<?php echo $website->ID ?>">Generate Backlog</a>
+                </div>
+
             </div>
         </div>
 
@@ -49,5 +49,9 @@ switch ($params['action']) {
     case "update_settings":
         include_once $plugin_url . '/includes/templates/settings.php';
         eey_reporting_settings_page();
+        break;
+    case 'generate_backlog':
+        include_once $plugin_url . '/includes/forms/generate_backlog.php';
+        generate_backlog($params['data_id']);
         break;
 }
