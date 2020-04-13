@@ -5,7 +5,7 @@ class GA_REPORT_FIELDS
 {
     function __construct()
     {
-        $this->report_fields = array(
+        $this->report_fields = [
             // Metrics
             'sessions' => array(
                 'alias' => 'Sessions',
@@ -63,12 +63,14 @@ class GA_REPORT_FIELDS
                 'alias' => 'Page Download Time (ms)',
                 'expression' => 'ga:pageDownloadTime'
             )
-
-        );
+        ];
     }
     // Create the Metrics objects
     public function generateMetrics($item)
     {
+        // Google Docs limit to 10 requests per second
+        sleep(1);
+
         $metric = new Google_Service_AnalyticsReporting_Metric();
         $metric->setExpression($item["expression"]);
         $metric->setAlias($item["alias"]);

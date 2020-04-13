@@ -79,31 +79,46 @@ class GA_API
 
     $array = [];
 
-    foreach ($chunks as $chunk) {
+    $dates = [
+      '2020-04-13',
+      '2020-03-13',
+      '2020-02-13',
+      '2020-01-13',
+    ];
 
-      // Create the DateRange object.
-      $dateRange = new Google_Service_AnalyticsReporting_DateRange();
+    print_r($dates);
 
-      // Get Data for specific date
-      // DEV NOTE: maybe go Month by month
-      $dateRange->setStartDate($startDate);
-      // $dateRange->setEndDate("today");
-      $dateRange->setEndDate($startDate);
+    // die();
 
-      // Create the ReportRequest object.
-      $request = new Google_Service_AnalyticsReporting_ReportRequest();
-      $request->setViewId($VIEW_ID);
-      $request->setDateRanges($dateRange);
+    foreach ($dates as $startDate) {
+      sleep(1);
+      foreach ($chunks as $chunk) {
+        // Create the DateRange object.
+        $dateRange = new Google_Service_AnalyticsReporting_DateRange();
 
-      $request->setMetrics($chunk);
+        // Get Data for specific date
+        // DEV NOTE: maybe go Month by month
+        $dateRange->setStartDate($startDate);
+        // $dateRange->setEndDate("today");
+        $dateRange->setEndDate($startDate);
 
-      $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
-      $body->setReportRequests(array($request));
-      $this->printResults(array($analytics->reports->batchGet($body)));
-      // array_push($array, $analytics->reports->batchGet($body));
+        // Create the ReportRequest object.
+        $request = new Google_Service_AnalyticsReporting_ReportRequest();
+        $request->setViewId($VIEW_ID);
+        $request->setDateRanges($dateRange);
+
+        $request->setMetrics($chunk);
+        // Google Docs limit to 10 requests per second
+        sleep(1);
+        $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
+        $body->setReportRequests(array($request));
+        // Google Docs limit to 10 requests per second
+        sleep(1);
+        array_push($array, $analytics->reports->batchGet($body));
+      }
     }
 
-    // return $array;
+    return $array;
   }
 
 
@@ -118,28 +133,30 @@ class GA_API
       <?php
 
       foreach ($reports_array as $reports) {
+
         for ($reportIndex = 0; $reportIndex < count($reports); $reportIndex++) {
+
           $report = $reports[$reportIndex];
+
           $header = $report->getColumnHeader();
 
-          $dimensionHeaders = $header->getDimensions();
-
           $metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
+
           $rows = $report->getData()->getRows();
 
           for ($rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
+
             $row = $rows[$rowIndex];
-            $dimensions = $row->getDimensions();
+
             $metrics = $row->getMetrics();
-            for ($i = 0; $i < count($dimensionHeaders) && $i < count($dimensions); $i++) {
-              print($dimensionHeaders[$i] . ": " . $dimensions[$i] . "\n");
-            }
       ?>
             <?php
 
             for ($j = 0; $j < count($metrics); $j++) {
+
               $values = $metrics[$j]->getValues();
               for ($k = 0; $k < count($values); $k++) {
+
                 $entry = $metricHeaders[$k];
             ?>
                 <li><?php echo $entry->getName() ?>: <?php echo $values[$k] ?></li>
