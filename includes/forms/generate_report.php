@@ -21,7 +21,8 @@ function generate_report($ID)
     include_once $plugin_url . '/includes/forms/ga_inc/ga_report_class.php';
 
     $trello = new TRELLO_API();
-    $trello->RenderResults($result->trello_board_id);
+    $trello_report = $trello->getData($result->trello_board_id);
+    $trello->RenderResults($trello_report);
     $google = new GA_API();
     $google->report($result->ga_view_id);
 }

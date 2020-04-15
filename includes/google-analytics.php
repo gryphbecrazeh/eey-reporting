@@ -6,6 +6,7 @@ require_once plugin_dir_path(__DIR__) . 'vendor/autoload.php';
 
 class GA_API
 {
+
   /**
    * Initializes an Analytics Reporting API V4 service object.
    *
@@ -57,6 +58,12 @@ class GA_API
   }
 
 
+
+
+
+
+
+
   /**
    * Queries the Analytics Reporting API V4.
    *
@@ -68,11 +75,14 @@ class GA_API
     // $startDate = date('Y-m-d', strtotime('-1 month'));
     // $startDate = date('Y-m-d', strtotime('2020-04-09'));
     $startDate = $date;
+
+
     // Get fields from class
     include_once plugin_dir_path(__DIR__) . 'includes/forms/ga_inc/ga_report_class.php';
 
     $get_request_fields = new GA_REPORT_FIELDS();
-    $request_fields = $get_request_fields->mapMetrics($get_request_fields->report_fields);
+
+    $request_fields = $get_request_fields->report_fields;
 
     // Break down into an array to iterate through and get all options
     $chunks = array_chunk($request_fields, 10);
@@ -80,46 +90,57 @@ class GA_API
     $array = [];
 
     $dates = [
-      '2020-04-13',
-      '2020-03-13',
-      '2020-02-13',
-      '2020-01-13',
+      '2020-04-01',
+      '2020-03-01',
+      '2020-02-01',
+      '2020-01-01',
     ];
-
-    print_r($dates);
-
-    // die();
 
     foreach ($dates as $startDate) {
       sleep(1);
       foreach ($chunks as $chunk) {
+
         // Create the DateRange object.
         $dateRange = new Google_Service_AnalyticsReporting_DateRange();
+
+        $endDate = date('Y-m-t', strtotime($startDate));
 
         // Get Data for specific date
         // DEV NOTE: maybe go Month by month
         $dateRange->setStartDate($startDate);
         // $dateRange->setEndDate("today");
-        $dateRange->setEndDate($startDate);
+        $dateRange->setEndDate($endDate);
 
         // Create the ReportRequest object.
         $request = new Google_Service_AnalyticsReporting_ReportRequest();
         $request->setViewId($VIEW_ID);
         $request->setDateRanges($dateRange);
 
-        $request->setMetrics($chunk);
-        // Google Docs limit to 10 requests per second
-        sleep(1);
+        $metrics = $get_request_fields->mapMetrics($chunk);
+
+        $request->setMetrics($metrics);
+
         $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
         $body->setReportRequests(array($request));
-        // Google Docs limit to 10 requests per second
+        $results = $analytics->reports->batchGet($body);
+
+        $this->printResults(array($results));
+
+        array_push($array, $results);
         sleep(1);
-        array_push($array, $analytics->reports->batchGet($body));
       }
     }
 
     return $array;
   }
+
+
+
+
+
+
+
+
 
 
   /**
@@ -133,7 +154,6 @@ class GA_API
       <?php
 
       foreach ($reports_array as $reports) {
-
         for ($reportIndex = 0; $reportIndex < count($reports); $reportIndex++) {
 
           $report = $reports[$reportIndex];
@@ -185,6 +205,6 @@ class GA_API
     $date = current_time('Y-m-d');
 
     $google_response = $this->getReport($analytics, $view_id, $date);
-    return $this->printResults($google_response);
+    // return $this->printResults($google_response);
   }
 }

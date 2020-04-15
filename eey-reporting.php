@@ -28,8 +28,6 @@ defined('EEY_REPORTING_CSS_DIR') or define('EEY_REPORTING_CSS_DIR', plugin_dir_u
 
 // Includes
 include_once __DIR__ . '/includes/options.php';
-#require_once 'includes/google-analytics.php';
-#require_once 'includes/trello-api.php';
 
 
 if (!class_exists('EEY_REPORTING_Class')) {
@@ -124,6 +122,7 @@ if (!class_exists('EEY_REPORTING_Class')) {
             require_once(ABSPATH . "wp-admin/includes/upgrade.php");
             // Add Table
             dbDelta($eey_reporting_query);
+
         }
 
         function eey_reporting_page_speed()

@@ -7,6 +7,23 @@ class GA_REPORT_FIELDS
     {
         $this->report_fields = [
             // Metrics
+
+            'ctr' => array(
+                'alias' => 'CTR',
+                'expression' => 'ga:CTR'
+            ),
+            'page_load_time' => array(
+                'alias' => 'Page Load Time (ms)',
+                'expression' => 'ga:pageLoadTime'
+            ),
+            'avg_page_load_time' => array(
+                'alias' => 'Average Page Load Time (sec)',
+                'expression' => 'ga:avgPageLoadTime'
+            ),
+            'page_download_time' => array(
+                'alias' => 'Page Download Time (ms)',
+                'expression' => 'ga:pageDownloadTime'
+            ),
             'sessions' => array(
                 'alias' => 'Sessions',
                 'expression' => 'ga:sessions'
@@ -47,30 +64,12 @@ class GA_REPORT_FIELDS
                 'alias' => 'CPC',
                 'expression' => 'ga:CPC'
             ),
-            'ctr' => array(
-                'alias' => 'CTR',
-                'expression' => 'ga:CTR'
-            ),
-            'page_load_time' => array(
-                'alias' => 'Page Load Time (ms)',
-                'expression' => 'ga:pageLoadTime'
-            ),
-            'avg_page_load_time' => array(
-                'alias' => 'Average Page Load Time (sec)',
-                'expression' => 'ga:avgPageLoadTime'
-            ),
-            'page_download_time' => array(
-                'alias' => 'Page Download Time (ms)',
-                'expression' => 'ga:pageDownloadTime'
-            )
         ];
     }
     // Create the Metrics objects
     public function generateMetrics($item)
     {
         // Google Docs limit to 10 requests per second
-        sleep(1);
-
         $metric = new Google_Service_AnalyticsReporting_Metric();
         $metric->setExpression($item["expression"]);
         $metric->setAlias($item["alias"]);
@@ -80,7 +79,6 @@ class GA_REPORT_FIELDS
 
     public function mapMetrics($array)
     {
-        // $map = array_map(array($this, 'generateMetrics'), $array);
         $map = [];
         foreach ($array as $item) {
             array_push($map, $this->generateMetrics($item));
