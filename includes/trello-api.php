@@ -29,26 +29,21 @@ class TRELLO_API
     //     $json = json_decode($response);
     //     return $json;
     // }
-    function RenderResults($boardId)
+    function RenderResults($cards)
     {
-        foreach (array_filter($lists, 'FilterList') as $list) {
 
 ?>
-            <p>Completed tasks in <?php echo date('M') ?></p>
-            <ul>
-                <?php
-                foreach (array_filter($cards, "FilterCards") as $card) {
-                    if ($card->idList === $list->id) {
-                ?>
-                        <li><?php echo $card->name ?></li>
-                <?php
-                    }
-                }
-
-                ?>
-            </ul>
+        <ul>
             <?php
-        }
+            foreach (array_filter($cards, array($this, "FilterCards")) as $card) {
+            ?>
+                <li><?php echo $card->name ?></li>
+            <?php
+            }
+
+            ?>
+        </ul>
+        <?php
     }
     function getData($boardId)
     {
@@ -81,7 +76,7 @@ class TRELLO_API
             $cards = $json->cards;
             // If nothing is returned, somehting went wrong
             if (!$cards || !$lists) {
-            ?>
+        ?>
                 <script>
                     console.log($response);
                 </script>
@@ -112,8 +107,8 @@ class TRELLO_API
             }
 
             $list = array_filter($lists, 'FilterList');
-
             // Check if the 'Completed Tasks' list is present
+
             if (!$list) {
             ?>
                 <h3>'Completed Tasks' List is not found on that board</h3>
@@ -121,20 +116,17 @@ class TRELLO_API
 <?php
                 die();
             }
-
+            // Filter the cards to be exclusively from the 'Completed Tasks' list
             $list_cards = array_filter($cards, function ($card) use ($list) {
-                $cardID = $card->id;
-                $listID = $list->id;
-                if ($cardID === $listID) {
+                $cardID = $card->idList;
+                $listID = $list[10]->id;
+                if ($cardID == $listID) {
                     return true;
                 } else {
                     return false;
                 }
             });
-            print_r($list);
-            print_r($list_cards);
-
-            die();
+            return $list_cards;
         } else {
             echo 'Board Not Found...';
             echo '<br>';
@@ -144,26 +136,3 @@ class TRELLO_API
         curl_close($curl);
     }
 }
-/*
-
-$lists = $json->lists;
-            $cards = $json->cards;
-            function FilterList($item)
-            {
-                if ($item->name === "Completed")
-                    return TRUE;
-                else
-                    return FALSE;
-            }
-            function FilterCards($item)
-            {
-                $startDate = date('Y-m-d', strtotime('-1 month'));
-                $cardID = $item->id;
-                $createdDate = date('Y-m-d', hexdec(substr($cardID, 0, 8)));
-                if ($createdDate > $startDate)
-                    return TRUE;
-                else
-                    return FALSE;
-            }
-
-            */

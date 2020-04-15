@@ -23,6 +23,7 @@ function generate_report($ID)
     $trello = new TRELLO_API();
     $trello_report = $trello->getData($result->trello_board_id);
     $trello->RenderResults($trello_report);
+    die();
     $google = new GA_API();
     $google->report($result->ga_view_id);
 }
