@@ -47,7 +47,7 @@ class TRELLO_API
 
                 ?>
             </ul>
-<?php
+            <?php
         }
     }
     function getData($boardId)
@@ -79,9 +79,23 @@ class TRELLO_API
         if ($json) {
             $lists = $json->lists;
             $cards = $json->cards;
+            // If nothing is returned, somehting went wrong
+            if (!$cards || !$lists) {
+            ?>
+                <script>
+                    console.log($response);
+                </script>
+                <h3>An Error has occurred</h3>
+                <p>The response object has been output to the console</p>
+                <p>Please reach out to a coder for support</p>
+
+            <?php
+                die();
+            }
+
             function FilterList($item)
             {
-                if ($item->name === "Completed")
+                if ($item->name === "Completed Tasks")
                     return TRUE;
                 else
                     return FALSE;
@@ -96,14 +110,36 @@ class TRELLO_API
                 else
                     return FALSE;
             }
-            
-            print_r($cards);
+
+            $list = array_filter($lists, 'FilterList');
+
+            // Check if the 'Completed Tasks' list is present
+            if (!$list) {
+            ?>
+                <h3>'Completed Tasks' List is not found on that board</h3>
+                <p>Please verify that that board's column is labeled correctly</p>
+<?php
+                die();
+            }
+
+            $list_cards = array_filter($cards, function ($card) use ($list) {
+                $cardID = $card->id;
+                $listID = $list->id;
+                if ($cardID === $listID) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            print_r($list);
+            print_r($list_cards);
+
             die();
-            
         } else {
             echo 'Board Not Found...';
             echo '<br>';
             echo "Cannot find <a href='https://trello.com/b/$boardId'>https://trello.com/b/$boardId</a>...";
+            die();
         }
         curl_close($curl);
     }
