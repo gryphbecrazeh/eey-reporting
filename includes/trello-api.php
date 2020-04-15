@@ -31,6 +31,27 @@ class TRELLO_API
     // }
     function RenderResults($boardId)
     {
+        foreach (array_filter($lists, 'FilterList') as $list) {
+
+?>
+            <p>Completed tasks in <?php echo date('M') ?></p>
+            <ul>
+                <?php
+                foreach (array_filter($cards, "FilterCards") as $card) {
+                    if ($card->idList === $list->id) {
+                ?>
+                        <li><?php echo $card->name ?></li>
+                <?php
+                    }
+                }
+
+                ?>
+            </ul>
+<?php
+        }
+    }
+    function getData($boardId)
+    {
         global $wpdb;
 
         $settings_table = $wpdb->prefix . 'eey_reporting_settings';
@@ -38,11 +59,6 @@ class TRELLO_API
         $query = "SELECT * FROM $settings_table";
 
         $config = $wpdb->get_results($query)[0];
-
-        // $plugin_url = ABSPATH . 'wp-content/plugins/eey-reporting';
-
-        // $str = file_get_contents($plugin_url . '/includes/config/Trello-API.json');
-        // $json = json_decode($str, true);
 
         $key = $config->trello_api_key;
         $token = $config->trello_default_token;
@@ -80,25 +96,10 @@ class TRELLO_API
                 else
                     return FALSE;
             }
-            // foreach (array_filter($lists, "FilterList") as $list) {
-            foreach (array_filter($lists, 'FilterList') as $list) {
 
-?>
-                <p>Completed tasks in <?php echo date('M') ?></p>
-                <ul>
-                    <?php
-                    foreach (array_filter($cards, "FilterCards") as $card) {
-                        if ($card->idList === $list->id) {
-                    ?>
-                            <li><?php echo $card->name ?></li>
-                    <?php
-                        }
-                    }
-
-                    ?>
-                </ul>
-<?php
-            }
+            print_r($cards);
+            die();
+            
         } else {
             echo 'Board Not Found...';
             echo '<br>';
