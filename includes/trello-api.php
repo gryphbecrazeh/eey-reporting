@@ -96,7 +96,7 @@ class TRELLO_API
                 else
                     return FALSE;
             }
-
+            
             print_r($cards);
             die();
             
@@ -108,3 +108,26 @@ class TRELLO_API
         curl_close($curl);
     }
 }
+/*
+
+$lists = $json->lists;
+            $cards = $json->cards;
+            function FilterList($item)
+            {
+                if ($item->name === "Completed")
+                    return TRUE;
+                else
+                    return FALSE;
+            }
+            function FilterCards($item)
+            {
+                $startDate = date('Y-m-d', strtotime('-1 month'));
+                $cardID = $item->id;
+                $createdDate = date('Y-m-d', hexdec(substr($cardID, 0, 8)));
+                if ($createdDate > $startDate)
+                    return TRUE;
+                else
+                    return FALSE;
+            }
+
+            */
