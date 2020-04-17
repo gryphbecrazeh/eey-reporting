@@ -63,22 +63,29 @@ class TRELLO_API
 
         foreach ($targetted_cards as $card) {
             $report_title = array(
-                'task' => $card->name
+                'task' => $card->name,
+                // 'completed' => 1
             );
             array_push($cards, $report_title);
         }
-        
+
 
         $user_id = $_GET['id'];
-        $date = Date('Y-m-d',strtotime('now'));
+        $date = Date('Y-m-d', strtotime('now'));
         $path = wp_upload_dir();
         $filename = "$domain-$date-trello-export.csv";
-        $outstream = fopen($path['path']."$filename",'w');
-        $user = get_user_by('id',$user_id);
+        $outstream = fopen($path['path'] . "$filename", 'w');
+        $user = get_user_by('id', $user_id);
+        // CSV Headers
+
+        // $csv_id = array('ID', $domain);
+        // fputcsv($outstream, $csv_id);
+        // $csv_date = array('Date', $date_range['start'] . 'to' . $date_range['end']);
+        // fputcsv($outstream, $csv_date);
 
         $header = array_keys($cards[0]);
-
         fputcsv($outstream, $header);
+        // Output Data
 
         foreach ($cards as $row) {
             fputcsv($outstream, $row);
@@ -86,7 +93,7 @@ class TRELLO_API
         fclose($outstream);
         echo '<a href=' . $path['url'] . $filename . "'>Download</a>";
     }
-    
+
     function getData($boardId)
     {
         global $wpdb;
