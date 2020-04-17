@@ -19,23 +19,15 @@ function generate_report($ID)
     include_once $plugin_url . '/includes/google-analytics.php';
 
     include_once $plugin_url . '/includes/forms/ga_inc/ga_report_class.php';
-    ?>
-    <form action="post"></form>
-    
-    
-    <?php
-    
+?>
+
+<?php
+
     $trello = new TRELLO_API();
     $trello_report = $trello->getData($result->trello_board_id);
-    // Serialize the received report
-    $serialized_trello_report = serialize($trello_report);
 
-    // $unserialized = unserialize($serialized_trello_report);
-
-    // $trello->RenderResults($unserialized);
+    $trello->generateCSV($trello_report, $result->domain_name, array('start' => '2020-04-01', 'end' => '2020-04-30'));
+    // $trello->RenderResults($trello_report);
 
     die();
-
-    $google = new GA_API();
-    $google->report($result->ga_view_id);
 }

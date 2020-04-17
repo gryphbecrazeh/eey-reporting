@@ -7,63 +7,95 @@ class GA_REPORT_FIELDS
     {
         $this->report_fields = [
             // Metrics
+            /*
 
-            'ctr' => array(
-                'alias' => 'CTR',
-                'expression' => 'ga:CTR'
+Users ( metric user ) ga:users
+New Users ( metric user ) ga:newUsers
+Bounce Rate ( metric session ) ga:bounceRate
+Sessions ( metric session ) ga:sessions
+Avg Session Rate ( duration? metric session ) ga:avgSessionDuration
+Organic Search ( metrics traffic sources ) ga:organicSearches
+
+
+Source/Medium ( dimension traffic sources ) ga:sourceMedium
+Referral Path ( dimension traffic sources ) ga:referralPath
+Campaign ( dimension traffice sources ) ga:campaign
+Keyword ( dimension traffice sources ) ga:keyword
+
+*/
+            'sourceMedium' => array(
+                'alias' => 'Source / Medium',
+                'expression' => 'ga:sourceMedium'
             ),
-            'page_load_time' => array(
-                'alias' => 'Page Load Time (ms)',
-                'expression' => 'ga:pageLoadTime'
+            'referralPath' => array(
+                'alias' => 'Referral Path',
+                'expression' => 'ga:referralPath'
             ),
-            'avg_page_load_time' => array(
-                'alias' => 'Average Page Load Time (sec)',
-                'expression' => 'ga:avgPageLoadTime'
+            'campaign' => array(
+                'alias' => 'Campaign',
+                'expression' => 'ga:campaign'
             ),
-            'page_download_time' => array(
-                'alias' => 'Page Download Time (ms)',
-                'expression' => 'ga:pageDownloadTime'
-            ),
-            'sessions' => array(
-                'alias' => 'Sessions',
-                'expression' => 'ga:sessions'
-            ),
-            'bounces' => array(
-                'alias' => 'Bounces',
-                'expression' => 'ga:bounces'
-            ),
-            'bounce_rate' => array(
-                'alias' => 'Bounce Rate',
-                'expression' => 'ga:bounceRate'
-            ),
-            'avg_session_duration' => array(
-                'alias' => 'Average Session Duration',
-                'expression' => 'ga:avgSessionDuration'
-            ),
-            'organic_searches' => array(
-                'alias' => 'Organic Searches',
-                'expression' => 'ga:organicSearches'
-            ),
-            'impressions' => array(
-                'alias' => 'Impressions',
-                'expression' => 'ga:impressions'
-            ),
-            'clicks' => array(
-                'alias' => 'Clicks',
-                'expression' => 'ga:adClicks'
-            ),
-            'cost' => array(
-                'alias' => 'Cost',
-                'expression' => 'ga:adCost'
-            ),
-            'cpm' => array(
-                'alias' => 'CPM',
-                'expression' => 'ga:CPM'
-            ),
-            'cpc' => array(
-                'alias' => 'CPC',
-                'expression' => 'ga:CPC'
-            ),
+            'keyword' => array(
+                'alias' => 'Keyword',
+                'expression' => 'ga:keyword'
+            )
+            // 'ctr' => array(
+            //     'alias' => 'CTR',
+            //     'expression' => 'ga:CTR'
+            // ),
+            // 'page_load_time' => array(
+            //     'alias' => 'Page Load Time (ms)',
+            //     'expression' => 'ga:pageLoadTime'
+            // ),
+            // 'avg_page_load_time' => array(
+            //     'alias' => 'Average Page Load Time (sec)',
+            //     'expression' => 'ga:avgPageLoadTime'
+            // ),
+            // 'page_download_time' => array(
+            //     'alias' => 'Page Download Time (ms)',
+            //     'expression' => 'ga:pageDownloadTime'
+            // ),
+            // 'sessions' => array(
+            //     'alias' => 'Sessions',
+            //     'expression' => 'ga:sessions'
+            // ),
+            // 'bounces' => array(
+            //     'alias' => 'Bounces',
+            //     'expression' => 'ga:bounces'
+            // ),
+            // 'bounce_rate' => array(
+            //     'alias' => 'Bounce Rate',
+            //     'expression' => 'ga:bounceRate'
+            // ),
+            // 'avg_session_duration' => array(
+            //     'alias' => 'Average Session Duration',
+            //     'expression' => 'ga:avgSessionDuration'
+            // ),
+            // 'organic_searches' => array(
+            //     'alias' => 'Organic Searches',
+            //     'expression' => 'ga:organicSearches'
+            // ),
+            // 'impressions' => array(
+            //     'alias' => 'Impressions',
+            //     'expression' => 'ga:impressions'
+            // ),
+            // 'clicks' => array(
+            //     'alias' => 'Clicks',
+            //     'expression' => 'ga:adClicks'
+            // ),
+            // 'cost' => array(
+            //     'alias' => 'Cost',
+            //     'expression' => 'ga:adCost'
+            // ),
+            // 'cpm' => array(
+            //     'alias' => 'CPM',
+            //     'expression' => 'ga:CPM'
+            // ),
+            // 'cpc' => array(
+            //     'alias' => 'CPC',
+            //     'expression' => 'ga:CPC'
+            // ),
+
         ];
     }
     // Create the Metrics objects

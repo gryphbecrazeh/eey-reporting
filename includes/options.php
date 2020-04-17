@@ -25,7 +25,7 @@ class EEY_REPORTING_SETTINGS_Class
         include_once __DIR__ . '/forms/delete_site.php';
         include_once __DIR__ . '/templates/settings.php';
         include_once __DIR__ . '/forms/generate_backlog.php';
-
+        include_once __DIR__ . '/forms/generate_csv.php';
 
         add_menu_page('EEY Reporting', 'EEY Reporting', 'manage_options', 'eey_reporting_plugin', array($this, 'admin_index'), '
             dashicons-format-aside', 110);
@@ -37,6 +37,7 @@ class EEY_REPORTING_SETTINGS_Class
         eey_reporting_delete_website();
         eey_reporting_update_settings();
         eey_reporting_generate_backlog();
+        eey_reporting_generate_csv();
     }
 
     public function insert_links($links)

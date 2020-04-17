@@ -14,15 +14,14 @@ if (!isset($_GET['data_id'])) {
         <div class="website-container">
             <div class="website-domain"><?php echo $website->domain_name; ?></div>
             <div class="actions-container">
-                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_report&data_id=<?php echo $website->ID ?>">Generate Report</a>
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_csv&data_id=<?php echo $website->ID ?>">Generate CSV</a>
                 </div>
                 <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=edit_site&data_id=<?php echo $website->ID ?>">Edit Site</a>
                 </div>
                 <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=delete_site&data_id=<?php echo $website->ID ?>">Delete Site</a>
                 </div>
-                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_backlog&data_id=<?php echo $website->ID ?>">Generate Backlog</a>
-                </div>
-
+                <!-- <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_backlog&data_id=<?php echo $website->ID ?>">Generate Backlog</a>
+                </div> -->
             </div>
         </div>
 
@@ -53,5 +52,9 @@ switch ($params['action']) {
     case 'generate_backlog':
         include_once $plugin_url . '/includes/forms/generate_backlog.php';
         generate_backlog($params['data_id']);
+        break;
+    case 'generate_csv':
+        include_once $plugin_url . '/includes/forms/generate_csv.php';
+        eey_reporting_generate_csv_form($params['data_id']);
         break;
 }
