@@ -23,12 +23,12 @@ function edit_site($data_id)
         <p>( Found on Show Menu -> More -> https://trello.com/b/[Trello Board ID] )</p>
         <input type="text" name="trello_board_id" value=<?php echo $results->trello_board_id ?> />
 
-        <h3>Google Analytics</h3>
+        <!-- <h3>Google Analytics</h3>
 
         <div> <label>Google Analytics View ID</label>
             <p>(ex: "196072291")</p>
             <input type="text" name="ga_view_id" value=<?php echo $results->ga_type ?> />
-        </div>
+        </div> -->
         <button type="submit" name="edit_website">Update Website</button>
     </form>
 <?php

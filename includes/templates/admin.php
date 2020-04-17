@@ -14,11 +14,11 @@ if (!isset($_GET['data_id'])) {
         <div class="website-container">
             <div class="website-domain"><?php echo $website->domain_name; ?></div>
             <div class="actions-container">
-                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_csv&data_id=<?php echo $website->ID ?>">Generate CSV</a>
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_csv&data_id=<?php echo $website->ID ?>" target="_blank">Generate CSV</a>
                 </div>
-                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=edit_site&data_id=<?php echo $website->ID ?>">Edit Site</a>
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=edit_site&data_id=<?php echo $website->ID ?>" target="_blank">Edit Site</a>
                 </div>
-                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=delete_site&data_id=<?php echo $website->ID ?>">Delete Site</a>
+                <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=delete_site&data_id=<?php echo $website->ID ?>" target="_blank">Delete Site</a>
                 </div>
                 <!-- <div class="button"> <a href="admin.php?page=eey_reporting_plugin&action=generate_backlog&data_id=<?php echo $website->ID ?>">Generate Backlog</a>
                 </div> -->
