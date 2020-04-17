@@ -59,39 +59,60 @@ class TRELLO_API
                 return FALSE;
         });
 
-        $cards = [];
+        if (count($targetted_cards) > 0) {
+            $cards = [];
 
-        foreach ($targetted_cards as $card) {
-            $report_title = array(
-                'Completed Tasks' => $card->name,
-                // 'completed' => 1
-            );
-            array_push($cards, $report_title);
+            foreach ($targetted_cards as $card) {
+                $report_title = array(
+                    'Completed Tasks' => $card->name,
+                    // 'completed' => 1
+                );
+                array_push($cards, $report_title);
+            }
+
+            if (count($cards) > 0) {
+                $user_id = $_GET['id'];
+                $date = Date('Y-m-d', strtotime('now'));
+                $path = wp_upload_dir();
+                $filename = "$domain-$date-trello-export.csv";
+                $outstream = fopen($path['path'] . "$filename", 'w');
+                $user = get_user_by('id', $user_id);
+                // CSV Headers
+
+                // $csv_id = array('ID', $domain);
+                // fputcsv($outstream, $csv_id);
+                // $csv_date = array('Date', $date_range['start'] . 'to' . $date_range['end']);
+                // fputcsv($outstream, $csv_date);
+
+                $header = array_keys($cards[0]);
+                fputcsv($outstream, $header);
+                // Output Data
+
+                foreach ($cards as $row) {
+                    fputcsv($outstream, $row);
+                }
+                fclose($outstream);
+                echo '<a href=' . $path['url'] . $filename . "'>Download</a>";
+            } else {
+        ?>
+
+                <div>
+                    <strong>No Cards found in that time-frame</strong>
+                    <p>Please verify that completed tasks are being added to the 'Completed Tasks' list</p>
+                </div>
+            <?php
+                die();
+            }
+        } else {
+            ?>
+
+            <div>
+                <strong>No Cards found in that time-frame</strong>
+                <p>Please verify that completed tasks are being added to the 'Completed Tasks' list</p>
+            </div>
+            <?php
+            die();
         }
-
-
-        $user_id = $_GET['id'];
-        $date = Date('Y-m-d', strtotime('now'));
-        $path = wp_upload_dir();
-        $filename = "$domain-$date-trello-export.csv";
-        $outstream = fopen($path['path'] . "$filename", 'w');
-        $user = get_user_by('id', $user_id);
-        // CSV Headers
-
-        // $csv_id = array('ID', $domain);
-        // fputcsv($outstream, $csv_id);
-        // $csv_date = array('Date', $date_range['start'] . 'to' . $date_range['end']);
-        // fputcsv($outstream, $csv_date);
-
-        $header = array_keys($cards[0]);
-        fputcsv($outstream, $header);
-        // Output Data
-
-        foreach ($cards as $row) {
-            fputcsv($outstream, $row);
-        }
-        fclose($outstream);
-        echo '<a href=' . $path['url'] . $filename . "'>Download</a>";
     }
 
     function getData($boardId)
@@ -125,7 +146,7 @@ class TRELLO_API
             $cards = $json->cards;
             // If nothing is returned, somehting went wrong
             if (!$cards || !$lists) {
-        ?>
+            ?>
                 <script>
                     console.log($response);
                 </script>
