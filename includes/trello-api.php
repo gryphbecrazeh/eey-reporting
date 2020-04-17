@@ -63,7 +63,7 @@ class TRELLO_API
 
         foreach ($targetted_cards as $card) {
             $report_title = array(
-                'task' => $card->name,
+                'Completed Tasks' => $card->name,
                 // 'completed' => 1
             );
             array_push($cards, $report_title);
