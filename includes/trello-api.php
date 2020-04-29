@@ -144,6 +144,7 @@ class TRELLO_API
         if ($json) {
             $lists = $json->lists;
             $cards = $json->cards;
+    
             // If nothing is returned, somehting went wrong
             if (!$cards || !$lists) {
             ?>
@@ -177,9 +178,15 @@ class TRELLO_API
             }
 
             $list = array_filter($lists, 'FilterList');
+            $listID = "";
+            foreach($list as $item) {
+                if($item->id)
+                {
+                    $listID=$item->id;
+                }
+            }
             // Check if the 'Completed Tasks' list is present
-
-            if (!$list) {
+            if (!$listID) {
             ?>
                 <h3>'Completed Tasks' List is not found on that board</h3>
                 <p>Please verify that that board's column is labeled correctly</p>
@@ -187,9 +194,8 @@ class TRELLO_API
                 die();
             }
             // Filter the cards to be exclusively from the 'Completed Tasks' list
-            $list_cards = array_filter($cards, function ($card) use ($list) {
+            $list_cards = array_filter($cards, function ($card) use ($listID) {
                 $cardID = $card->idList;
-                $listID = $list[10]->id;
                 if ($cardID == $listID) {
                     return true;
                 } else {

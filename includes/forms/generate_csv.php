@@ -58,7 +58,6 @@ function eey_reporting_generate_csv()
 
         $trello = new TRELLO_API();
         $trello_report = $trello->getData($result->trello_board_id);
-
         $trello->generateCSV($trello_report, $result->domain_name, array('start' => $date_start, 'end' => $date_end));
         die();
 
