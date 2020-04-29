@@ -74,7 +74,8 @@ class TRELLO_API
                 $user_id = $_GET['id'];
                 $date = Date('Y-m-d', strtotime('now'));
                 $path = wp_upload_dir();
-                $filename = "$domain-$date-trello-export.csv";
+                $file_domain_name = preg_replace('/\W/','',$domain);
+                $filename = "$file_domain_name-$date-trello-export.csv";
                 $outstream = fopen($path['path'] . "$filename", 'w');
                 $user = get_user_by('id', $user_id);
                 // CSV Headers
